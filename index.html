@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            overflow: hidden;
+        }
+        canvas {
+            border: 1px solid black;
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+    <script>
+        // Disable right-click and prevent shortcuts
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F12' || e.ctrlKey || e.shiftKey) {
+                e.preventDefault();
+            }
+        });
+
+        // Game setup
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const gridSize = 20;
+        const canvasSize = 400;
+
+        let snake = [{ x: 80, y: 80 }];
+        let direction = { x: gridSize, y: 0 };
+        let bait = { x: 100, y: 100 };
+
+        function drawSnake() {
+            snake.forEach(part => {
+                ctx.fillStyle = 'green';
+                ctx.fillRect(part.x, part.y, gridSize, gridSize);
+            });
+        }
+
+        function drawBait() {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(bait.x, bait.y, gridSize, gridSize);
+        }
+
+        function moveSnake() {
+            const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+            snake.unshift(head);
+            snake.pop();
+        }
+
+        function generateBait() {
+            bait.x = Math.floor(Math.random() * (canvasSize / gridSize)) * gridSize;
+            bait.y = Math.floor(Math.random() * (canvasSize / gridSize)) * gridSize;
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvasSize, canvasSize);
+            moveSnake();
+            drawSnake();
+            drawBait();
+            // Continue the game loop
+            setTimeout(gameLoop, 100);
+        }
+
+        // Event listener for key presses
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp' && direction.y === 0) {
+                direction = { x: 0, y: -gridSize };
+            } else if (e.key === 'ArrowDown' && direction.y === 0) {
+                direction = { x: 0, y: gridSize };
+            } else if (e.key === 'ArrowLeft' && direction.x === 0) {
+                direction = { x: -gridSize, y: 0 };
+            } else if (e.key === 'ArrowRight' && direction.x === 0) {
+                direction = { x: gridSize, y: 0 };
+            }
+        });
+
+        // Start the game loop
+        gameLoop();
+    </script>
+</body>
+</html>
